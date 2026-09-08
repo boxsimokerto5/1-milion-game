@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="neonRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b3b" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+
+    <linearGradient id="neonEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <linearGradient id="neonGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+
+    <linearGradient id="controllerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <filter id="shadowFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.75" />
+    </filter>
+
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Transparent background for Android Adaptive Foreground -->
+
+  <!-- SAFE ZONE CONTAINER (centered within 66% safe circle) -->
+  <g transform="translate(0, 0)">
+    <!-- Outer Shield / Hexagonal Emblem -->
+    <polygon points="512,180 770,290 770,640 512,820 254,640 254,290" 
+             fill="#0b1329" 
+             stroke="url(#neonRed)" 
+             stroke-width="8" 
+             filter="url(#shadowFilter)" />
+
+    <!-- Inner Shield Accent Line -->
+    <polygon points="512,210 740,310 740,620 512,785 284,620 284,310" 
+             fill="#070c18" 
+             stroke="#1e293b" 
+             stroke-width="4" />
+
+    <!-- Corner Accents -->
+    <circle cx="512" cy="180" r="10" fill="#ff3b3b" filter="url(#neonGlow)" />
+    <circle cx="770" cy="290" r="8" fill="#34d399" />
+    <circle cx="770" cy="640" r="8" fill="#ff3b3b" />
+    <circle cx="512" cy="820" r="10" fill="#34d399" filter="url(#neonGlow)" />
+    <circle cx="254" cy="640" r="8" fill="#ff3b3b" />
+    <circle cx="254" cy="290" r="8" fill="#34d399" />
+
+    <!-- Top Badge: "1M" -->
+    <g transform="translate(512, 270)">
+      <rect x="-65" y="-24" width="130" height="42" rx="21" fill="url(#neonRed)" filter="url(#shadowFilter)" />
+      <text x="0" y="6" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="24" text-anchor="middle" letter-spacing="2">1M</text>
+    </g>
+
+    <!-- Main Gamepad Controller Silhouette -->
+    <path d="M 340 370 
+             C 410 370, 450 410, 512 410 
+             C 574 410, 614 370, 684 370 
+             C 745 370, 770 420, 760 550 
+             C 750 630, 700 660, 640 640 
+             C 590 620, 570 570, 512 570 
+             C 454 570, 434 620, 384 640 
+             C 324 660, 274 630, 264 550 
+             C 254 420, 279 370, 340 370 Z" 
+          fill="url(#controllerGrad)" 
+          stroke="#334155" 
+          stroke-width="7" 
+          filter="url(#shadowFilter)" />
+
+    <!-- Controller Top Accent Trim Line -->
+    <path d="M 370 400 C 440 400, 470 435, 512 435 C 554 435, 584 400, 654 400" 
+          fill="none" 
+          stroke="#475569" 
+          stroke-width="3" 
+          stroke-linecap="round" />
+
+    <!-- LEFT SIDE: Modern Glowing D-Pad -->
+    <g transform="translate(365, 495)">
+      <rect x="-42" y="-14" width="84" height="28" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2" />
+      <rect x="-14" y="-42" width="28" height="84" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2" />
+      <circle cx="0" cy="0" r="9" fill="#1e293b" />
+      <polygon points="0,-34 -7,-24 7,-24" fill="#ef4444" />
+      <polygon points="0,34 -7,24 7,24" fill="#ef4444" />
+      <polygon points="-34,0 -24,-7 -24,7" fill="#ef4444" />
+      <polygon points="34,0 24,-7 24,7" fill="#ef4444" />
+    </g>
+
+    <!-- CENTER: Astrocade Neon Core / Logo Orb -->
+    <g transform="translate(512, 495)">
+      <circle cx="0" cy="0" r="34" fill="#090d16" stroke="url(#neonRed)" stroke-width="4" filter="url(#neonGlow)" />
+      <circle cx="0" cy="0" r="18" fill="url(#neonRed)" />
+      <path d="M 0 -10 L 8 4 L 2 4 L 4 10 L -6 -1 L 0 -1 Z" fill="#ffffff" />
+    </g>
+
+    <!-- RIGHT SIDE: 4 Action Gaming Buttons -->
+    <g transform="translate(659, 495)">
+      <circle cx="0" cy="-28" r="14" fill="#0f172a" stroke="#f59e0b" stroke-width="3" />
+      <circle cx="0" cy="-28" r="7" fill="url(#neonGold)" />
+      <circle cx="0" cy="28" r="14" fill="#0f172a" stroke="#10b981" stroke-width="3" />
+      <circle cx="0" cy="28" r="7" fill="url(#neonEmerald)" />
+      <circle cx="-28" cy="0" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3" />
+      <circle cx="-28" cy="0" r="7" fill="#38bdf8" />
+      <circle cx="28" cy="0" r="14" fill="#0f172a" stroke="#ef4444" stroke-width="3" />
+      <circle cx="28" cy="0" r="7" fill="url(#neonRed)" />
+    </g>
+
+    <!-- LOWER BANNER: "ASTROCADE" -->
+    <g transform="translate(512, 720)">
+      <rect x="-180" y="-30" width="360" height="60" rx="16" 
+            fill="#090d16" 
+            stroke="url(#neonRed)" 
+            stroke-width="4" 
+            filter="url(#shadowFilter)" />
+      <text x="0" y="11" 
+            fill="#ffffff" 
+            font-family="system-ui, -apple-system, sans-serif" 
+            font-weight="900" 
+            font-size="30" 
+            text-anchor="middle" 
+            letter-spacing="5">ASTROCADE</text>
+      <text x="0" y="44" 
+            fill="#34d399" 
+            font-family="system-ui, -apple-system, sans-serif" 
+            font-weight="700" 
+            font-size="12" 
+            text-anchor="middle" 
+            letter-spacing="3">1 MILIONS GAME</text>
+    </g>
+  </g>
+</svg>

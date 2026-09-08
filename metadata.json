@@ -1,0 +1,6 @@
+{
+  "name": "Astrocade - 1 Milions Game",
+  "description": "Play Astrocade games directly in fullscreen with 1 Milions Game.",
+  "requestFramePermissions": ["screen-wake-lock"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
