@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.onemilionsgame.astrocade',
-  appName: 'Astrocade',
+  appName: 'Game Saldo DANA',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

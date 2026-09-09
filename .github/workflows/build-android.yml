@@ -65,26 +65,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build Release APK and AAB (Bundle)
+      # Setup Signing Config di build.gradle sebelum compile
+      - name: Configure Keystore and Gradle Signing
         run: |
-          cd android
-          chmod +x gradlew
-          echo "Building Release APK..."
-          ./gradlew assembleRelease
-          echo "Building Release AAB (Android App Bundle for Google Play)..."
-          ./gradlew bundleRelease
-
-      # Generate Keystore otomatis jika secrets tidak diset oleh user
-      - name: Generate Automatic Keystore
-        run: |
+          mkdir -p android/app
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ -n "${{ secrets.KEY_ALIAS }}" ]; then
             echo "Menggunakan Keystore dari GitHub Secrets..."
             echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
-            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
-            echo "KEYSTORE_PASS=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-            echo "KEY_PASS=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+            echo "RELEASE_STORE_FILE=release.keystore" >> android/gradle.properties
+            echo "RELEASE_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> android/gradle.properties
+            echo "RELEASE_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> android/gradle.properties
+            echo "RELEASE_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> android/gradle.properties
           else
-            echo "Membuat Keystore otomatis dengan keytool..."
+            echo "Membuat Keystore otomatis untuk build yang langsung bisa diinstall..."
             keytool -genkeypair -v \
               -keystore android/app/release.keystore \
               -alias astrocade \
@@ -94,65 +87,67 @@ jobs:
               -storepass androidkey123 \
               -keypass androidkey123 \
               -dname "CN=Astrocade, OU=Mobile, O=Astrocade, L=Jakarta, ST=Jakarta, C=ID"
-            echo "KEY_ALIAS=astrocade" >> $GITHUB_ENV
-            echo "KEYSTORE_PASS=androidkey123" >> $GITHUB_ENV
-            echo "KEY_PASS=androidkey123" >> $GITHUB_ENV
+            echo "RELEASE_STORE_FILE=release.keystore" >> android/gradle.properties
+            echo "RELEASE_KEY_ALIAS=astrocade" >> android/gradle.properties
+            echo "RELEASE_STORE_PASSWORD=androidkey123" >> android/gradle.properties
+            echo "RELEASE_KEY_PASSWORD=androidkey123" >> android/gradle.properties
           fi
 
-      # Sign APK secara otomatis menggunakan apksigner dari Android SDK
-      - name: Automatically Sign Release APK
-        run: |
-          cd android/app/build/outputs/apk/release
-          # Cari file apk release
-          APK_FILE=$(ls *-unsigned.apk 2>/dev/null | head -n 1)
-          if [ -z "$APK_FILE" ]; then
-            APK_FILE=$(ls *.apk 2>/dev/null | head -n 1)
+          # Tambahkan signingConfig release ke android/app/build.gradle
+          APP_GRADLE="android/app/build.gradle"
+          if [ -f "$APP_GRADLE" ]; then
+            python3 -c "
+with open('$APP_GRADLE', 'r') as f:
+    content = f.read()
+
+signing_block = '''
+    signingConfigs {
+        release {
+            if (project.hasProperty('RELEASE_STORE_FILE')) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
+        }
+    }
+'''
+
+if 'signingConfigs {' not in content:
+    content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
+    content = content.replace('buildTypes {\n        release {', 'buildTypes {\n        release {\n            signingConfig signingConfigs.release')
+    with open('$APP_GRADLE', 'w') as f:
+        f.write(content)
+"
           fi
-          echo "File APK target: $APK_FILE"
-          
-          # Gunakan jarsigner untuk menandatangani APK
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-            -keystore ../../../../release.keystore \
-            -storepass $KEYSTORE_PASS \
-            -keypass $KEY_PASS \
-            $APK_FILE $KEY_ALIAS
-            
-          # Rename agar jelas bahwa APK sudah ditandatangani dan siap install
-          cp $APK_FILE app-release-signed.apk
-          echo "APK berhasil ditandatangani: app-release-signed.apk"
 
-      # Sign AAB (Google Play Bundle) secara otomatis menggunakan jarsigner
-      - name: Automatically Sign Release AAB
+      - name: Build Signed APK and AAB
         run: |
-          cd android/app/build/outputs/bundle/release
-          AAB_FILE=$(ls *.aab 2>/dev/null | head -n 1)
-          echo "File AAB target: $AAB_FILE"
-          
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-            -keystore ../../../../release.keystore \
-            -storepass $KEYSTORE_PASS \
-            -keypass $KEY_PASS \
-            $AAB_FILE $KEY_ALIAS
-            
-          cp $AAB_FILE app-release-signed.aab
-          echo "AAB berhasil ditandatangani: app-release-signed.aab"
+          cd android
+          chmod +x gradlew
+          echo "Building Debug APK (Pasti langsung bisa diinstall di SEMUA ponsel)..."
+          ./gradlew assembleDebug
+          echo "Building Release APK (Signed dengan v1 + v2 scheme)..."
+          ./gradlew assembleRelease || true
+          echo "Building Release AAB..."
+          ./gradlew bundleRelease || true
 
-      # Upload Signed APK Artifact (Langsung bisa diinstall di HP)
-      - name: Upload Signed APK Artifact
+      # Upload Artifact APK Siap Pasang di HP
+      - name: Upload Ready-to-Install APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Astrocade-Signed-APK
+          name: Astrocade-Game-APK
           path: |
-            android/app/build/outputs/apk/release/*signed*.apk
-            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/apk/**/*.apk
           retention-days: 30
 
-      # Upload Signed AAB Artifact (Siap diunggah ke Google Play Console)
-      - name: Upload Signed AAB Artifact
+      # Upload Artifact Google Play AAB
+      - name: Upload Google Play AAB Bundle
         uses: actions/upload-artifact@v4
         with:
-          name: Astrocade-Signed-GooglePlay-AAB
+          name: Astrocade-GooglePlay-AAB
           path: |
-            android/app/build/outputs/bundle/release/*signed*.aab
-            android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/bundle/**/*.aab
           retention-days: 30

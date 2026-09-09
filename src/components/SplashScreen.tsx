@@ -55,11 +55,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
           className="relative mb-6"
         >
           <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-sky-400 via-[#108EE9] to-blue-600 p-[2px] shadow-xl shadow-sky-500/20">
-            <div className="w-full h-full rounded-[22px] bg-white flex items-center justify-center relative overflow-hidden shadow-inner">
-              {/* Subtle sweep highlight */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-sky-100/60 to-transparent animate-pulse" />
-              <Gamepad2 className="w-12 h-12 text-[#108EE9] drop-shadow-[0_4px_10px_rgba(16,142,233,0.3)]" />
-              <Sparkles className="w-4 h-4 text-amber-500 absolute top-3 right-3 animate-ping" />
+            <div className="w-full h-full rounded-[22px] bg-white flex items-center justify-center relative overflow-hidden shadow-inner p-2">
+              <img src="/icon.svg" alt="Game Saldo DANA Logo" className="w-full h-full object-contain rounded-xl" />
+              <Sparkles className="w-4 h-4 text-amber-500 absolute top-2 right-2 animate-ping" />
             </div>
           </div>
         </motion.div>
