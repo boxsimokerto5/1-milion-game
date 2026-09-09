@@ -74,59 +74,85 @@ jobs:
           echo "Building Release AAB (Android App Bundle for Google Play)..."
           ./gradlew bundleRelease
 
-      # Check if GitHub Secrets are provided for Signing
-      - name: Check Signing Secrets
-        id: check_secrets
+      # Generate Keystore otomatis jika secrets tidak diset oleh user
+      - name: Generate Automatic Keystore
         run: |
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ -n "${{ secrets.KEY_ALIAS }}" ]; then
-            echo "has_secrets=true" >> $GITHUB_OUTPUT
+            echo "Menggunakan Keystore dari GitHub Secrets..."
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+            echo "KEYSTORE_PASS=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+            echo "KEY_PASS=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
           else
-            echo "has_secrets=false" >> $GITHUB_OUTPUT
-            echo "Warning: Keystore secrets not detected. Will upload unsigned release APK & AAB."
+            echo "Membuat Keystore otomatis dengan keytool..."
+            keytool -genkeypair -v \
+              -keystore android/app/release.keystore \
+              -alias astrocade \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -storepass androidkey123 \
+              -keypass androidkey123 \
+              -dname "CN=Astrocade, OU=Mobile, O=Astrocade, L=Jakarta, ST=Jakarta, C=ID"
+            echo "KEY_ALIAS=astrocade" >> $GITHUB_ENV
+            echo "KEYSTORE_PASS=androidkey123" >> $GITHUB_ENV
+            echo "KEY_PASS=androidkey123" >> $GITHUB_ENV
           fi
 
-      # Sign APK & AAB if Secrets are provided
-      - name: Decode Keystore File
-        if: steps.check_secrets.outputs.has_secrets == 'true'
+      # Sign APK secara otomatis menggunakan apksigner dari Android SDK
+      - name: Automatically Sign Release APK
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+          cd android/app/build/outputs/apk/release
+          # Cari file apk release
+          APK_FILE=$(ls *-unsigned.apk 2>/dev/null | head -n 1)
+          if [ -z "$APK_FILE" ]; then
+            APK_FILE=$(ls *.apk 2>/dev/null | head -n 1)
+          fi
+          echo "File APK target: $APK_FILE"
+          
+          # Gunakan jarsigner untuk menandatangani APK
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore ../../../../release.keystore \
+            -storepass $KEYSTORE_PASS \
+            -keypass $KEY_PASS \
+            $APK_FILE $KEY_ALIAS
+            
+          # Rename agar jelas bahwa APK sudah ditandatangani dan siap install
+          cp $APK_FILE app-release-signed.apk
+          echo "APK berhasil ditandatangani: app-release-signed.apk"
 
-      - name: Sign Release APK
-        if: steps.check_secrets.outputs.has_secrets == 'true'
-        uses: r0adkll/sign-android-release@v1
-        id: sign_apk
-        with:
-          releaseDirectory: android/app/build/outputs/apk/release
-          signingKey: ${{ secrets.KEYSTORE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      # Sign AAB (Google Play Bundle) secara otomatis menggunakan jarsigner
+      - name: Automatically Sign Release AAB
+        run: |
+          cd android/app/build/outputs/bundle/release
+          AAB_FILE=$(ls *.aab 2>/dev/null | head -n 1)
+          echo "File AAB target: $AAB_FILE"
+          
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore ../../../../release.keystore \
+            -storepass $KEYSTORE_PASS \
+            -keypass $KEY_PASS \
+            $AAB_FILE $KEY_ALIAS
+            
+          cp $AAB_FILE app-release-signed.aab
+          echo "AAB berhasil ditandatangani: app-release-signed.aab"
 
-      - name: Sign Release AAB (for Google Play Store)
-        if: steps.check_secrets.outputs.has_secrets == 'true'
-        uses: r0adkll/sign-android-release@v1
-        id: sign_aab
-        with:
-          releaseDirectory: android/app/build/outputs/bundle/release
-          signingKey: ${{ secrets.KEYSTORE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      # Upload Signed or Unsigned APK Artifact
-      - name: Upload APK Artifact
+      # Upload Signed APK Artifact (Langsung bisa diinstall di HP)
+      - name: Upload Signed APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Astrocade-APK
+          name: Astrocade-Signed-APK
           path: |
+            android/app/build/outputs/apk/release/*signed*.apk
             android/app/build/outputs/apk/release/*.apk
           retention-days: 30
 
-      # Upload Signed or Unsigned AAB (Google Play Bundle) Artifact
-      - name: Upload AAB (Google Play Store Bundle) Artifact
+      # Upload Signed AAB Artifact (Siap diunggah ke Google Play Console)
+      - name: Upload Signed AAB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Astrocade-GooglePlay-AAB
+          name: Astrocade-Signed-GooglePlay-AAB
           path: |
+            android/app/build/outputs/bundle/release/*signed*.aab
             android/app/build/outputs/bundle/release/*.aab
           retention-days: 30

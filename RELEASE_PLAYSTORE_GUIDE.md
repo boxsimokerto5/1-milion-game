@@ -1,12 +1,23 @@
 # Panduan Build APK & AAB Google Play Store via GitHub Actions
 
-Proyek ini telah dikonfigurasi penuh dengan **Capacitor** dan **GitHub Actions** untuk menghasilkan:
-1. **APK Release:** Siap diinstall langsung di ponsel Android untuk pengetesan.
-2. **AAB Release (Android App Bundle):** File resmi standar yang diwajibkan untuk diunggah ke **Google Play Console**.
+Proyek ini telah dikonfigurasi penuh dengan **Capacitor** dan **GitHub Actions** dengan **TANDA TANGAN OTOMATIS (AUTO-SIGNING)**:
+1. **APK Release Signed (`Astrocade-Signed-APK`):** Sudah otomatis ditandatangani dengan signature key RSA 2048-bit yang valid. Bisa langsung diinstall di semua HP Android tanpa error "Paket tidak valid" atau "Aplikasi tidak terpasang".
+2. **AAB Release Signed (`Astrocade-Signed-GooglePlay-AAB`):** Sudah otomatis ditandatangani dan siap diunggah langsung ke **Google Play Console**.
 
 ---
 
-## 1. Perintah Membuat Signature Keystore (Kunci Tanda Tangan)
+## ⚡ Fitur Baru: Tanda Tangan Otomatis (Auto-Signing)
+Anda **tidak perlu lagi repot membuat keystore manual** jika hanya ingin menguji coba APK di HP Android:
+* GitHub Actions sekarang secara otomatis men-generate signature key keystore bawaan standar menggunakan `keytool`.
+* File APK dan AAB otomatis ditandatangani menggunakan algoritma `SHA256withRSA`.
+* Hasil build di tab **Actions** akan menghasilkan artefak:
+  - **`Astrocade-Signed-APK`**
+  - **`Astrocade-Signed-GooglePlay-AAB`**
+
+---
+
+## (Opsional) Menggunakan Signature Keystore Khusus Pribadi
+Jika suatu saat Anda ingin menggunakan kunci tanda tangan milik Anda sendiri:
 
 Buka terminal di komputer Anda (Command Prompt / PowerShell di Windows, atau Terminal di Mac / Linux), lalu jalankan perintah `keytool` berikut:
 
