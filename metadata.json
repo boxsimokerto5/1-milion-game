@@ -1,6 +1,6 @@
 {
-  "name": "Astrocade - 1 Milions Game",
-  "description": "Play Astrocade games directly in fullscreen with 1 Milions Game.",
+  "name": "Game Saldo DANA",
+  "description": "Mainkan Game Saldo DANA, kumpulkan poin reward, dan tukarkan langsung ke saldo DANA asli.",
   "requestFramePermissions": ["screen-wake-lock"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

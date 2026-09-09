@@ -21,22 +21,22 @@ export const GameFrame: React.FC<GameFrameProps> = ({
     <div className="relative w-full h-full bg-slate-950 overflow-hidden select-none">
       {/* Loading Overlay */}
       {isLoading && !hasError && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-sm transition-opacity duration-500">
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm transition-opacity duration-500">
           <div className="relative flex items-center justify-center mb-6">
-            <div className="w-20 h-20 rounded-full border-4 border-red-500/20 border-t-red-500 animate-spin" />
+            <div className="w-20 h-20 rounded-full border-4 border-sky-100 border-t-[#108EE9] animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <ShieldAlert className="w-8 h-8 text-red-500 animate-pulse" />
+              <ShieldAlert className="w-8 h-8 text-[#108EE9] animate-pulse" />
             </div>
           </div>
-          <h2 className="text-xl font-bold tracking-wider text-slate-100 uppercase">
-            Memuat Game Astrocade...
+          <h2 className="text-xl font-bold tracking-wider text-slate-100">
+            Memuat Game Saldo DANA...
           </h2>
           <p className="mt-2 text-sm text-slate-400 max-w-xs text-center">
-            Menyiapkan canvas WebGL dan engine Astrocade ke layar penuh.
+            Menyiapkan canvas WebGL dan engine game ke layar penuh.
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1.5 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            Mode Full Screen Siap
+          <div className="mt-4 flex items-center gap-2 text-xs text-sky-300 bg-sky-950/60 border border-sky-800/60 px-3 py-1.5 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+            Mode Layar Penuh Siap
           </div>
         </div>
       )}
