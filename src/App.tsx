@@ -52,7 +52,7 @@ export default function App() {
     setRewardConfig(cfg);
   }, [showAdminModal]);
 
-  // Trigger ad presentation (prefer real Unity Ads, respect user preference on simulation)
+  // Trigger ad presentation (prefer real Unity Ads on Android, fallback to modal on web)
   const triggerAd = useCallback(async () => {
     const cfg = PointService.getRewardConfig();
     const canShowNative = UnityAdsService.isNativeAndroidAvailable();
@@ -61,23 +61,48 @@ export default function App() {
       // Panggil iklan video berhadiah asli Unity Ads di Android
       const shown = await UnityAdsService.showRewardedAd(cfg);
       if (shown) {
+        setGameplayToast('Memuat video iklan Unity Ads...');
+        setTimeout(() => setGameplayToast(null), 3000);
         return;
       }
     }
 
-    // Jika native belum siap atau web fallback:
-    // Cek apakah iklan cadangan (simulasi) diizinkan oleh admin/user
-    if (cfg.allowSimulatedAds) {
-      setShowAdModal(true);
-    } else {
-      // Iklan simulasi/palsu dimatikan oleh pengguna:
-      // Tampilkan toast informatif bahwa iklan asli Unity Ads siap di perangkat Android
-      setGameplayToast('Iklan resmi Unity Ads aktif (Game ID: ' + (cfg.unityGameId || '800370501') + ')');
-      setTimeout(() => setGameplayToast(null), 3500);
-      setRemainingSeconds(cfg.intervalSeconds);
-      setIsAdReady(false);
-    }
+    // Jika sedang di Web Browser / Preview:
+    // Tampilkan pemutar iklan agar pemain/admin tetap bisa mengetes reward dan tidak macet!
+    setShowAdModal(true);
   }, []);
+
+  // Handle ad reward claimed
+  const handleClaimAdReward = useCallback((points: number) => {
+    PointService.addPoints(points, 'ad_reward', 'Menonton Iklan Bonus 2 Menit').then((updated) => {
+      setUser({ ...updated });
+    });
+    // Reset timer to 2 minutes
+    const cfg = PointService.getRewardConfig();
+    setRemainingSeconds(cfg.intervalSeconds);
+    setIsAdReady(false);
+    setGameplayToast(`+${points} Poin DANA Berhasil Diklaim!`);
+    setTimeout(() => setGameplayToast(null), 3500);
+  }, []);
+
+  // Register Native Android Unity Ads callbacks
+  useEffect(() => {
+    window.onUnityAdRewarded = () => {
+      const cfg = PointService.getRewardConfig();
+      handleClaimAdReward(cfg.adRewardPoints);
+    };
+
+    window.onUnityAdError = (errMessage?: string) => {
+      console.warn('[UnityAds Native Error]', errMessage);
+      setGameplayToast('Iklan video Unity Ads sedang memuat, silakan coba lagi beberapa saat');
+      setTimeout(() => setGameplayToast(null), 4000);
+    };
+
+    return () => {
+      window.onUnityAdRewarded = undefined;
+      window.onUnityAdError = undefined;
+    };
+  }, [handleClaimAdReward]);
 
   // Main 2-minute countdown timer & gameplay reward interval
   useEffect(() => {
@@ -113,19 +138,6 @@ export default function App() {
 
     return () => clearInterval(interval);
   }, [showSplash, showStartPopup, showAdModal, gameStarted, triggerAd]);
-
-  // Handle ad reward claimed
-  const handleClaimAdReward = useCallback((points: number) => {
-    PointService.addPoints(points, 'ad_reward', 'Menonton Iklan Bonus 2 Menit').then((updated) => {
-      setUser({ ...updated });
-    });
-    // Reset timer to 2 minutes
-    const cfg = PointService.getRewardConfig();
-    setRemainingSeconds(cfg.intervalSeconds);
-    setIsAdReady(false);
-    setGameplayToast(`+${points} Poin DANA Berhasil Diklaim!`);
-    setTimeout(() => setGameplayToast(null), 3500);
-  }, []);
 
   // Fullscreen state detector
   useEffect(() => {

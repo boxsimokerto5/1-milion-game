@@ -47,6 +47,10 @@ jobs:
           echo "Syncing web assets to Android..."
           npx cap sync android
 
+      - name: Inject Unity Ads Native SDK and JavaScript Bridge
+        run: |
+          python3 scripts/configure-unity-ads.py
+
       - name: Configure Android Manifest (Hardware Acceleration & Immersive Fullscreen)
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"

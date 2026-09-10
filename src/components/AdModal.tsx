@@ -98,14 +98,16 @@ export const AdModal: React.FC<AdModalProps> = ({
         >
           {/* Header Ad Bar */}
           <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-300 text-[10px]">
                 IKLAN BERHADIAH
               </span>
               <span className="px-2 py-0.5 rounded-full bg-sky-100 text-[#108EE9] font-bold border border-sky-300 text-[10px]">
                 Unity Ads (800370501)
               </span>
-              <span className="text-slate-600 text-[11px] font-medium hidden sm:inline">{currentSponsor.badge}</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium text-[10px] border border-emerald-200 hidden sm:inline">
+                Mode Preview Web
+              </span>
             </div>
 
             <div className="flex items-center gap-3">

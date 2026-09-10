@@ -11,6 +11,8 @@ declare global {
       showRewardedAd: (placementId: string) => void;
       isAdReady: (placementId: string) => boolean;
     };
+    onUnityAdRewarded?: () => void;
+    onUnityAdError?: (msg?: string) => void;
   }
 }
 
