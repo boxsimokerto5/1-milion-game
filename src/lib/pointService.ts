@@ -15,6 +15,7 @@ export const DEFAULT_CONFIG: RewardConfig = {
   unityGameId: '800370501',
   unityPlacementId: 'Rewarded_Android',
   unityTestMode: false,
+  allowSimulatedAds: false, // Iklan palsu/simulasi dinonaktifkan sesuai permintaan pengguna
 };
 
 // Generate random guest ID

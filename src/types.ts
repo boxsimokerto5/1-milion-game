@@ -50,4 +50,5 @@ export interface RewardConfig {
   unityGameId?: string; // Unity Ads Game ID (e.g. 800370501)
   unityPlacementId?: string; // e.g. Rewarded_Android
   unityTestMode?: boolean; // Test mode toggle
+  allowSimulatedAds?: boolean; // If false, fake simulated ads will never be shown
 }

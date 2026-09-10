@@ -94,34 +94,7 @@ jobs:
           fi
 
           # Tambahkan signingConfig release ke android/app/build.gradle
-          APP_GRADLE="android/app/build.gradle"
-          if [ -f "$APP_GRADLE" ]; then
-            python3 -c "
-with open('$APP_GRADLE', 'r') as f:
-    content = f.read()
-
-signing_block = '''
-    signingConfigs {
-        release {
-            if (project.hasProperty('RELEASE_STORE_FILE')) {
-                storeFile file(RELEASE_STORE_FILE)
-                storePassword RELEASE_STORE_PASSWORD
-                keyAlias RELEASE_KEY_ALIAS
-                keyPassword RELEASE_KEY_PASSWORD
-                v1SigningEnabled true
-                v2SigningEnabled true
-            }
-        }
-    }
-'''
-
-if 'signingConfigs {' not in content:
-    content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
-    content = content.replace('buildTypes {\n        release {', 'buildTypes {\n        release {\n            signingConfig signingConfigs.release')
-    with open('$APP_GRADLE', 'w') as f:
-        f.write(content)
-"
-          fi
+          python3 scripts/configure-signing.py
 
       - name: Build Signed APK and AAB
         run: |

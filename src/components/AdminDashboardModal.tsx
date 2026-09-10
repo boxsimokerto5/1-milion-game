@@ -506,6 +506,22 @@ CREATE TABLE IF NOT EXISTS public.point_history (
                       <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#108EE9]"></div>
                     </label>
                   </div>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-sky-200/60 mt-2">
+                    <div>
+                      <label className="font-semibold text-slate-700 block">Izinkan Iklan Cadangan (Simulasi):</label>
+                      <p className="text-[10px] text-slate-500">Jika dimatikan, HANYA iklan resmi Unity Ads asli yang akan diputar.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.allowSimulatedAds || false}
+                        onChange={(e) => setConfig({ ...config, allowSimulatedAds: e.target.checked })}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                  </div>
                 </div>
 
                 {saveSuccess && (

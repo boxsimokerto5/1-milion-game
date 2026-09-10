@@ -16,6 +16,7 @@ import { AuthModal } from './components/AuthModal';
 import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { GAME_DATA } from './data/gameConfig';
 import { PointService } from './lib/pointService';
+import { UnityAdsService } from './lib/unityAds';
 import { UserProfile, RewardConfig } from './types';
 import { Maximize, Sparkles } from 'lucide-react';
 
@@ -51,6 +52,33 @@ export default function App() {
     setRewardConfig(cfg);
   }, [showAdminModal]);
 
+  // Trigger ad presentation (prefer real Unity Ads, respect user preference on simulation)
+  const triggerAd = useCallback(async () => {
+    const cfg = PointService.getRewardConfig();
+    const canShowNative = UnityAdsService.isNativeAndroidAvailable();
+
+    if (canShowNative) {
+      // Panggil iklan video berhadiah asli Unity Ads di Android
+      const shown = await UnityAdsService.showRewardedAd(cfg);
+      if (shown) {
+        return;
+      }
+    }
+
+    // Jika native belum siap atau web fallback:
+    // Cek apakah iklan cadangan (simulasi) diizinkan oleh admin/user
+    if (cfg.allowSimulatedAds) {
+      setShowAdModal(true);
+    } else {
+      // Iklan simulasi/palsu dimatikan oleh pengguna:
+      // Tampilkan toast informatif bahwa iklan asli Unity Ads siap di perangkat Android
+      setGameplayToast('Iklan resmi Unity Ads aktif (Game ID: ' + (cfg.unityGameId || '800370501') + ')');
+      setTimeout(() => setGameplayToast(null), 3500);
+      setRemainingSeconds(cfg.intervalSeconds);
+      setIsAdReady(false);
+    }
+  }, []);
+
   // Main 2-minute countdown timer & gameplay reward interval
   useEffect(() => {
     // Only tick when player is actively in game (not on splash, not on start popup, and game has started)
@@ -61,7 +89,7 @@ export default function App() {
         if (prev <= 1) {
           setIsAdReady(true);
           // Automatically trigger Ad when 2 minutes reached!
-          setShowAdModal(true);
+          triggerAd();
           return 0;
         }
         return prev - 1;
@@ -84,7 +112,7 @@ export default function App() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [showSplash, showStartPopup, showAdModal, gameStarted]);
+  }, [showSplash, showStartPopup, showAdModal, gameStarted, triggerAd]);
 
   // Handle ad reward claimed
   const handleClaimAdReward = useCallback((points: number) => {
@@ -263,7 +291,7 @@ export default function App() {
           remainingSeconds={remainingSeconds}
           totalSeconds={rewardConfig.intervalSeconds}
           isAdReady={isAdReady}
-          onOpenAd={() => setShowAdModal(true)}
+          onOpenAd={triggerAd}
           onOpenWallet={() => setShowWalletModal(true)}
           onOpenAuth={() => {
             setAuthInitialMode('login');
