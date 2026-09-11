@@ -6,6 +6,7 @@ interface GameFrameProps {
   iframeRef: React.RefObject<HTMLIFrameElement | null>;
   onReload: () => void;
   keyTrigger: number;
+  bottomSpacing?: number;
 }
 
 export const GameFrame: React.FC<GameFrameProps> = ({
@@ -13,12 +14,18 @@ export const GameFrame: React.FC<GameFrameProps> = ({
   iframeRef,
   onReload,
   keyTrigger,
+  bottomSpacing = 56,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   return (
-    <div className="relative w-full h-full bg-slate-950 overflow-hidden select-none">
+    <div
+      className="relative w-full h-full bg-slate-950 overflow-hidden select-none transition-all duration-300"
+      style={{
+        paddingBottom: `calc(env(safe-area-inset-bottom, 0px) + ${bottomSpacing}px)`,
+      }}
+    >
       {/* Loading Overlay */}
       {isLoading && !hasError && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm transition-opacity duration-500">

@@ -334,19 +334,23 @@ export default function App() {
             enterFullscreen();
             setShowTapHint(false);
           }}
-          className="cursor-pointer fixed bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-white/90 border border-slate-200 px-4 py-1.5 text-xs text-slate-700 shadow-md backdrop-blur-sm transition-all duration-300 hover:bg-white"
+          style={{
+            bottom: `calc(env(safe-area-inset-bottom, 0px) + ${(rewardConfig.bottomSpacingPx ?? 56) + 12}px)`,
+          }}
+          className="cursor-pointer fixed left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-white/90 border border-slate-200 px-4 py-1.5 text-xs text-slate-700 shadow-md backdrop-blur-sm transition-all duration-300 hover:bg-white"
         >
           <Maximize className="w-3.5 h-3.5 text-[#108EE9]" />
           <span>Sentuh layar untuk mode Layar Penuh</span>
         </div>
       )}
 
-      {/* Direct Fullscreen Game Frame */}
+      {/* Direct Fullscreen Game Frame with Phone Navigation Offset */}
       <GameFrame
         url={GAME_DATA.url}
         iframeRef={iframeRef}
         onReload={handleReload}
         keyTrigger={reloadKey}
+        bottomSpacing={rewardConfig.bottomSpacingPx ?? 56}
       />
 
       {/* Ad Modal (Reward ad triggered automatically per 2 minutes or manually) */}

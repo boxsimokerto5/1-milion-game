@@ -448,6 +448,92 @@ CREATE TABLE IF NOT EXISTS public.point_history (
                   />
                 </div>
 
+                {/* Posisi Menu Bawah Game / Android Navigation Bar Offset */}
+                <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-300/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                        <span>📱</span> Posisi Menu Bawah Game (Offset Tombol HP)
+                      </h4>
+                      <p className="text-[10px] text-slate-500">
+                        Menaikkan menu seperti 'Home', 'My Arcade' agar tidak tertutup tombol navigasi HP Android.
+                      </p>
+                    </div>
+                    <span className="font-mono font-bold text-xs text-[#108EE9] bg-white px-2 py-0.5 rounded border border-sky-200">
+                      {config.bottomSpacingPx ?? 56}px
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min="0"
+                      max="120"
+                      step="4"
+                      value={config.bottomSpacingPx ?? 56}
+                      onChange={(e) => setConfig({ ...config, bottomSpacingPx: Number(e.target.value) })}
+                      className="flex-1 accent-[#108EE9] cursor-pointer"
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      max="120"
+                      value={config.bottomSpacingPx ?? 56}
+                      onChange={(e) => setConfig({ ...config, bottomSpacingPx: Number(e.target.value) })}
+                      className="w-16 px-2 py-1 rounded-lg bg-white border border-slate-300 text-center font-mono text-xs text-slate-800"
+                    />
+                  </div>
+
+                  {/* Preset Cepat */}
+                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                    <span className="text-[10px] text-slate-500 font-medium">Preset Cepat:</span>
+                    <button
+                      type="button"
+                      onClick={() => setConfig({ ...config, bottomSpacingPx: 0 })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition ${
+                        (config.bottomSpacingPx ?? 56) === 0
+                          ? 'bg-sky-600 text-white border-sky-600'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      0px (Rata)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfig({ ...config, bottomSpacingPx: 45 })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition ${
+                        (config.bottomSpacingPx ?? 56) === 45
+                          ? 'bg-sky-600 text-white border-sky-600'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      45px (Tipis)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfig({ ...config, bottomSpacingPx: 56 })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition ${
+                        (config.bottomSpacingPx ?? 56) === 56
+                          ? 'bg-sky-600 text-white border-sky-600'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      56px (Standar HP)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfig({ ...config, bottomSpacingPx: 75 })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition ${
+                        (config.bottomSpacingPx ?? 56) === 75
+                          ? 'bg-sky-600 text-white border-sky-600'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      75px (Ekstra)
+                    </button>
+                  </div>
+                </div>
+
                 {/* Unity Ads Integration Config */}
                 <div className="p-3.5 rounded-xl bg-sky-50/70 border border-sky-200 space-y-3">
                   <div className="flex items-center justify-between">

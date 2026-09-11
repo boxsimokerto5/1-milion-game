@@ -51,4 +51,5 @@ export interface RewardConfig {
   unityPlacementId?: string; // e.g. Rewarded_Android
   unityTestMode?: boolean; // Test mode toggle
   allowSimulatedAds?: boolean; // If false, fake simulated ads will never be shown
+  bottomSpacingPx?: number; // Jarak/Margin bawah game (px) agar menu Home & Arcade tidak tertimpa tombol navigasi HP
 }

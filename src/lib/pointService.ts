@@ -16,6 +16,7 @@ export const DEFAULT_CONFIG: RewardConfig = {
   unityPlacementId: 'Rewarded_Android',
   unityTestMode: false,
   allowSimulatedAds: true, // Diaktifkan untuk Web Browser Preview agar pengujian reward berjalan lancar
+  bottomSpacingPx: 56, // Standar tinggi navigation bar HP Android (56px) agar menu Home & My Arcade tidak tertimpa tombol HP
 };
 
 // Generate random guest ID
