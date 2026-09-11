@@ -98,10 +98,10 @@ public class MainActivity extends BridgeActivity {
         try {
             UnityAds.load(PLACEMENT_ID, new IUnityAdsLoadListener() {
                 @Override
-                public void onAdLoaded(String placementId) {}
+                public void onUnityAdsAdLoaded(String placementId) {}
 
                 @Override
-                public void onAdFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {}
+                public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {}
             });
         } catch (Exception e) {
             e.printStackTrace();
